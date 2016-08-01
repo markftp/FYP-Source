@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
  
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -14,6 +15,14 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
  
 public class main {
  
+	protected CompilationUnit parse(ICompilationUnit unit) {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setSource(unit); // set source
+		parser.setResolveBindings(true); // we need bindings later on
+		return (CompilationUnit) parser.createAST(null /* IProgressMonitor */); // parse
+	}
+	
 	//use ASTParse to parse string
 	public static void parse(String str) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
@@ -68,7 +77,7 @@ public class main {
 	public static void ParseFilesInDir() throws IOException{
 		File dirs = new File(".");
 		String dirPath = dirs.getCanonicalPath() + File.separator+"src"+File.separator;
- 
+		System.out.println("dirPath:" + dirPath);
 		File root = new File(dirPath);
 		//System.out.println(rootDir.listFiles());
 		File[] files = root.listFiles ( );
