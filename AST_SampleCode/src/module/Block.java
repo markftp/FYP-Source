@@ -3,19 +3,21 @@ package module;
 
 import java.util.ArrayList;
 import java.util.List;
-import module.descriptor.*;
+//import module.descriptor.*;
 
 public class Block extends Statement {
 
-	public static final ChildListPropertyDescriptor STATEMENTS_PROPERTY =
-		new ChildListPropertyDescriptor(Block.class, "statements", Statement.class, CYCLE_RISK); //$NON-NLS-1$
+//	public static final ChildListPropertyDescriptor STATEMENTS_PROPERTY =
+//		new ChildListPropertyDescriptor(Block.class, "statements", Statement.class, CYCLE_RISK); //$NON-NLS-1$
 
 	private static final List PROPERTY_DESCRIPTORS;
 
+	
+	
 	static {
 		List properyList = new ArrayList(2);
 		createPropertyList(Block.class, properyList);
-		addProperty(STATEMENTS_PROPERTY, properyList);
+//		addProperty(STATEMENTS_PROPERTY, properyList);
 		PROPERTY_DESCRIPTORS = reapPropertyList(properyList);
 	}
 
@@ -23,24 +25,24 @@ public class Block extends Statement {
 		return PROPERTY_DESCRIPTORS;
 	}
 
-	private Node.NodeList statements =
-		new Node.NodeList(STATEMENTS_PROPERTY);
+//	private Node.NodeList statements =
+//		new Node.NodeList(STATEMENTS_PROPERTY);
 
-	Block(Root ast) {
-		super(ast);
+	Block() {
+		super();
 	}
 
 	final List internalStructuralPropertiesForType(int apiLevel) {
 		return propertyDescriptors(apiLevel);
 	}
 
-	final List internalGetChildListProperty(ChildListPropertyDescriptor property) {
-		if (property == STATEMENTS_PROPERTY) {
-			return statements();
-		}
-		// allow default implementation to flag the error
-		return super.internalGetChildListProperty(property);
-	}
+//	final List internalGetChildListProperty(ChildListPropertyDescriptor property) {
+//		if (property == STATEMENTS_PROPERTY) {
+//			return statements();
+//		}
+//		// allow default implementation to flag the error
+//		return super.internalGetChildListProperty(property);
+//	}
 
 	final int getNodeType0() {
 		return BLOCK;
@@ -68,16 +70,16 @@ public class Block extends Statement {
 //		visitor.endVisit(this);
 //	}
 
-	public List statements() {
-		return this.statements;
-	}
+//	public List statements() {
+//		return this.statements;
+//	}
 
 	int memSize() {
 		return super.memSize() + 1 * 4;
 	}
 
-	int treeSize() {
-		return memSize() + this.statements.listSize();
-	}
+//	int treeSize() {
+//		return memSize() + this.statements.listSize();
+//	}
 }
 

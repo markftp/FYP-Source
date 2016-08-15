@@ -1,5 +1,5 @@
 package module;
-import module.descriptor.*;
+//import module.descriptor.*;
 
 public class IfStatement extends Statement{
 	
@@ -7,14 +7,14 @@ public class IfStatement extends Statement{
 	private Statement optionalElseStatement = null;
 	// private Expression expression = null;
 	// ChildPropertyDescriptor
-	public static final ChildPropertyDescriptor THEN_STATEMENT_PROPERTY =
-			new ChildPropertyDescriptor(IfStatement.class, "thenStatement", Statement.class, MANDATORY, CYCLE_RISK);
-	public static final ChildPropertyDescriptor ELSE_STATEMENT_PROPERTY =
-			new ChildPropertyDescriptor(IfStatement.class, "elseStatement", Statement.class, OPTIONAL, CYCLE_RISK);
+//	public static final ChildPropertyDescriptor THEN_STATEMENT_PROPERTY =
+//			new ChildPropertyDescriptor(IfStatement.class, "thenStatement", Statement.class, MANDATORY, CYCLE_RISK);
+//	public static final ChildPropertyDescriptor ELSE_STATEMENT_PROPERTY =
+//			new ChildPropertyDescriptor(IfStatement.class, "elseStatement", Statement.class, OPTIONAL, CYCLE_RISK);
 	// then
-	
-	IfStatement(Root ast) {
-		super(ast);
+//	
+	IfStatement() {
+		super();
 	}
 	
 
@@ -28,10 +28,10 @@ public class IfStatement extends Statement{
 
 	int treeSize() {
 		return
-			memSize()
+			memSize();
 //			+ (this.expression == null ? 0 : getExpression().treeSize())
-			+ (this.thenStatement == null ? 0 : getThenStatement().treeSize())
-			+ (this.optionalElseStatement == null ? 0 : getElseStatement().treeSize());
+//			+ (this.thenStatement == null ? 0 : getThenStatement().treeSize())
+//			+ (this.optionalElseStatement == null ? 0 : getElseStatement().treeSize());
 	}
 	
 	public Statement getThenStatement() {
@@ -39,9 +39,9 @@ public class IfStatement extends Statement{
 			// lazy init must be thread-safe for readers
 			synchronized (this) {
 				if (this.thenStatement == null) {
-					preLazyInit();
-					this.thenStatement = new Block(this.ast);
-					postLazyInit(this.thenStatement, THEN_STATEMENT_PROPERTY);
+//					preLazyInit();
+					this.thenStatement = new Block();
+//					postLazyInit(this.thenStatement, THEN_STATEMENT_PROPERTY);
 				}
 			}
 		}
@@ -52,10 +52,10 @@ public class IfStatement extends Statement{
 		if (statement == null) {
 			throw new IllegalArgumentException();
 		}
-		Node oldChild = this.thenStatement;
-		preReplaceChild(oldChild, statement, THEN_STATEMENT_PROPERTY);
+//		Node oldChild = this.thenStatement;
+//		preReplaceChild(oldChild, statement, THEN_STATEMENT_PROPERTY);
 		this.thenStatement = statement;
-		postReplaceChild(oldChild, statement, THEN_STATEMENT_PROPERTY);
+//		postReplaceChild(oldChild, statement, THEN_STATEMENT_PROPERTY);
 	}
 
 	// else
@@ -64,9 +64,9 @@ public class IfStatement extends Statement{
 	}
 	
 	public void setElseStatement(Statement statement) {
-		Node oldChild = this.optionalElseStatement;
-		preReplaceChild(oldChild, statement, ELSE_STATEMENT_PROPERTY);
+//		Node oldChild = this.optionalElseStatement;
+//		preReplaceChild(oldChild, statement, ELSE_STATEMENT_PROPERTY);
 		this.optionalElseStatement = statement;
-		postReplaceChild(oldChild, statement, ELSE_STATEMENT_PROPERTY);
+//		postReplaceChild(oldChild, statement, ELSE_STATEMENT_PROPERTY);
 	}
 }
