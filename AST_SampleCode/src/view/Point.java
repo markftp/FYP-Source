@@ -1,8 +1,11 @@
 package view;
 
+import module.Statement;
+
 public class Point {
 private int x = 0;
 private int y = 0;
+private Statement pointToStatement;
 
 public Point() {
 }
