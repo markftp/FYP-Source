@@ -48,11 +48,13 @@ public abstract class Statement {
 		this.typeAndFlags = old | (nodeType << 16);
 	}
 	
-	abstract int getNodeType();
+	public abstract int getNodeType();
 
 	abstract Statement init(int x, int y);
 	
-	abstract int getLineSize();
+	abstract int getWidthLineSize();
+	
+	abstract int getHighLineSize();
 
 	static void createPropertyList(Class nodeClass, List propertyList) {
 		// stuff nodeClass at head of list for future ref
@@ -87,5 +89,6 @@ public abstract class Statement {
 		}
 		return size;
 	}
+
 	
 }

@@ -7,14 +7,14 @@ import view.bean.DiamondShape;
 import view.bean.RectangleShape;
 import view.bean.Shape;
 
-public class IfStatement extends Statement{
-	
+public class IfStatement extends Statement {
+
 	private Statement ifThenStatement = null;
 	private Statement resultStatement = null;
-	
+
 	private ArrayList<Line> lineList = new ArrayList();
 	private ArrayList<Shape> shapeList = new ArrayList();
-	
+
 	private int initialX = 0;
 	private int initialY = 0;
 	// Diamond
@@ -23,40 +23,46 @@ public class IfStatement extends Statement{
 	// Rectangle 30 X 20
 	private int ifResultx = 0;
 	private int ifResulty = 0;
-	
+
 	private int totalSize = 120;
-	
+
 	private boolean isStart = false;
 	private boolean isEnd = false;
-	
-	private int lineSize = 1;
-	
+
+	private int defRecX1 = -10;
+	private int defRecY1 = 50;
+	private int defRecX2 = 35;
+	private int defRecY2 = 20;
+
+	private int widthLineSize = 1;
+	private int highLineSize = 1;
+
 	public IfStatement() {
 		super();
 	}
-	
+
 	public IfStatement(int x, int y) {
 		super();
-		buildDiagram(x,y, -1);
+		buildDiagram(x, y, -1, -1, defRecX1, defRecY1, defRecX2, defRecY2);
 	}
-	
-	public Statement init(int x, int y) {
-		buildDiagram(x,y, -1);
-		return (Statement)this;
-	}
-	
-//	public void rebuild(int x, int y) {
-//		buildDiagram(x,y);
-//	}
 
-	final int getNodeType() {
+	public Statement init(int x, int y) {
+		buildDiagram(x, y, -1, -1, defRecX1, defRecY1, defRecX2, defRecY2);
+		return (Statement) this;
+	}
+
+	// public void rebuild(int x, int y) {
+	// buildDiagram(x,y);
+	// }
+
+	public final int getNodeType() {
 		return IF_STATEMENT;
 	}
 
 	int memSize() {
 		return super.memSize();
 	}
-	
+
 	public Statement getThenStatement() {
 		if (this.ifThenStatement == null) {
 			// lazy init must be thread-safe for readers
@@ -77,11 +83,10 @@ public class IfStatement extends Statement{
 	public Statement getResultStatement() {
 		return this.resultStatement;
 	}
-	
+
 	public void setResultStatement(Statement resultStatement) {
-		if(resultStatement.getNodeType() == resultStatement.IF_STATEMENT)
-		{
-			totalSize += ((IfStatement)resultStatement).getTotalSize();
+		if (resultStatement.getNodeType() == resultStatement.IF_STATEMENT) {
+			totalSize += ((IfStatement) resultStatement).getTotalSize();
 			lineList = new ArrayList();
 			shapeList = new ArrayList();
 			shapeList.add(new DiamondShape(initialX + 30, initialY + 30, initialX - 10, initialY));
@@ -89,21 +94,33 @@ public class IfStatement extends Statement{
 			ifRuley = initialY + 30;
 			lineList.add(new Line(initialX + 10, initialY + 30, initialX + 10, initialY + 50));
 			buildArrow(initialX + 10, initialY + 50, 3);
-			
-			lineSize = resultStatement.getLineSize()+lineSize;
-			
-			lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * lineSize, initialY + 15));
-			lineList.add(new Line(initialX + 50 * lineSize, initialY + 15, initialX + 50 * lineSize , initialY + 100 * lineSize));
-			lineList.add(new Line(initialX + 50 * lineSize , initialY + 100 * lineSize, initialX + 10, initialY + 100 * lineSize));
-			buildArrow(initialX + 10, initialY + 100 * lineSize, 2);
-			lineList.add(new Line(initialX + 10, initialY + 80 * lineSize, initialX + 10, initialY + 120 * lineSize));
-			//shapeList.add(new RectangleShape(initialX - 10, initialY + 50, initialX + 30, initialY + 20));
+
+			widthLineSize = resultStatement.getWidthLineSize() + widthLineSize;
+			highLineSize = resultStatement.getHighLineSize() + highLineSize;
+			lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
+			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
+					initialY + 100 * highLineSize));
+			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
+					initialY + 100 * highLineSize));
+			buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
+			lineList.add(new Line(initialX + 10, initialY + 80 * highLineSize, initialX + 10,
+					initialY + 120 * widthLineSize));
+			// shapeList.add(new RectangleShape(initialX - 10, initialY + 50,
+			// initialX + 30, initialY + 20));
 			ifResulty = initialY + 50;
-			this.resultStatement = resultStatement.init(initialX,ifResulty);
-			
+			this.resultStatement = (IfStatement) resultStatement.init(initialX, ifResulty);
+
+		} else if (resultStatement.getNodeType() == resultStatement.BLOCK) {
+			this.resultStatement = resultStatement;
+			int LabelSize = ((Block) resultStatement).getLabel().getText().length();
+			int result = LabelSize / 4;
+			widthLineSize = result;
+			buildDiagram(initialX, initialY, widthLineSize, highLineSize, defRecX1, defRecY1, defRecX2 * result,
+					defRecY2);
+
 		}
 	}
-	
+
 	public ArrayList<Shape> getShapeList() {
 		return shapeList;
 	}
@@ -111,7 +128,7 @@ public class IfStatement extends Statement{
 	public void setShapeList(ArrayList<Shape> shapeList) {
 		this.shapeList = shapeList;
 	}
-	
+
 	public ArrayList<Line> getLineList() {
 		return lineList;
 	}
@@ -119,7 +136,7 @@ public class IfStatement extends Statement{
 	public void setLineList(ArrayList<Line> lineList) {
 		this.lineList = lineList;
 	}
-	
+
 	private void buildArrow(int x, int y, int status) {
 		if (status == 1) {
 			lineList.add(new Line(x, y, x - 6, y - 6));
@@ -138,8 +155,8 @@ public class IfStatement extends Statement{
 			lineList.add(new Line(x, y, x + 6, y - 6));
 		}
 	}
-	
-	public int getTotalSize(){
+
+	public int getTotalSize() {
 		return totalSize;
 	}
 
@@ -158,8 +175,9 @@ public class IfStatement extends Statement{
 	public void setStart(boolean isStart) {
 		this.isStart = isStart;
 	}
-	
-	public void buildDiagram(int x, int y, int lineSize2){
+
+	public void buildDiagram(int x, int y, int widthLineSize, int highLineSize, int RecX1, int RecY1, int RecX2,
+			int RecY2) {
 		shapeList = new ArrayList();
 		lineList = new ArrayList();
 		initialX = x;
@@ -169,24 +187,28 @@ public class IfStatement extends Statement{
 		ifRuley = y + 30;
 		lineList.add(new Line(x + 10, y + 30, x + 10, y + 50));
 		buildArrow(x + 10, y + 50, 3);
-//		lineList.add(new Line(x + 30, y + 15, x + 50, y + 15));
-//		lineList.add(new Line(x + 50, y + 15, x + 50, y + 100));
-//		lineList.add(new Line(x + 50, y + 100, x + 10, y + 100));
-//		buildArrow(x + 10, y + 100, 2);
-//		lineSize = resultStatement.getLineSize()+lineSize;
-		if(lineSize2 == -1)
-			lineSize2 = this.lineSize;
-		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * lineSize2, initialY + 15));
-		lineList.add(new Line(initialX + 50 * lineSize2, initialY + 15, initialX + 50 * lineSize2 , initialY + 100 * lineSize2));
-		lineList.add(new Line(initialX + 50 * lineSize2 , initialY + 100 * lineSize2, initialX + 10, initialY + 100 * lineSize2));
-		buildArrow(initialX + 10, initialY + 100 * lineSize2, 2);
-		shapeList.add(new RectangleShape(x - 10, y + 50, x + 30, y + 20));
+		// lineList.add(new Line(x + 30, y + 15, x + 50, y + 15));
+		// lineList.add(new Line(x + 50, y + 15, x + 50, y + 100));
+		// lineList.add(new Line(x + 50, y + 100, x + 10, y + 100));
+		// buildArrow(x + 10, y + 100, 2);
+		// lineSize = resultStatement.getLineSize()+lineSize;
+		if (highLineSize == -1)
+			highLineSize = this.highLineSize;
+		if (widthLineSize == -1)
+			widthLineSize = this.widthLineSize;
+		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
+				initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
+				initialY + 100 * highLineSize));
+		buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
+		shapeList.add(new RectangleShape(x + RecX1, y + RecY1, x + RecX2, y + RecY2));
 		ifResultx = x - 10;
 		ifResulty = y + 50;
-		lineList.add(new Line(x + 10, y + 80 , x + 10, y + 120 ));
+		lineList.add(new Line(x + 10, y + 80, x + 10, y + 120));
 	}
-	
-	public void buildDiagramWithoutShape(int x, int y, int lineSize2, int size){
+
+	public void buildDiagramWithoutShape(int x, int y, int widthLineSize, int highLineSize, int size) {
 		shapeList = new ArrayList();
 		lineList = new ArrayList();
 		initialX = x;
@@ -196,38 +218,82 @@ public class IfStatement extends Statement{
 		ifRuley = y + 30;
 		lineList.add(new Line(x + 10, y + 30, x + 10, y + 50));
 		buildArrow(x + 10, y + 50, 3);
-//		lineList.add(new Line(x + 30, y + 15, x + 50, y + 15));
-//		lineList.add(new Line(x + 50, y + 15, x + 50, y + 100));
-//		lineList.add(new Line(x + 50, y + 100, x + 10, y + 100));
-//		buildArrow(x + 10, y + 100, 2);
-//		lineSize = resultStatement.getLineSize()+lineSize;
-		if(lineSize2 == -1)
-			lineSize2 = this.lineSize;
-		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * lineSize2, initialY + 15));
-		lineList.add(new Line(initialX + 50 * lineSize2, initialY + 15, initialX + 50 * lineSize2 , initialY + 100 * lineSize2));
-		lineList.add(new Line(initialX + 50 * lineSize2 , initialY + 100 * lineSize2, initialX + 10, initialY + 100 * lineSize2));
-		buildArrow(initialX + 10, initialY + 100 * lineSize2, 2);
-		//shapeList.add(new RectangleShape(x - 10, y + 50, x + 30, y + 20));
-		//ifResultx = x - 10;
-		//ifResulty = y + 50;
-		//lineList.add(new Line(x + 10, y + 80, x + 10, y + 120));
-		totalSize +=size;
-	}	
-
-	public int getLineSize() {
-		return lineSize;
+		// lineList.add(new Line(x + 30, y + 15, x + 50, y + 15));
+		// lineList.add(new Line(x + 50, y + 15, x + 50, y + 100));
+		// lineList.add(new Line(x + 50, y + 100, x + 10, y + 100));
+		// buildArrow(x + 10, y + 100, 2);
+		// lineSize = resultStatement.getLineSize()+lineSize;
+		if (highLineSize == -1)
+			highLineSize = this.highLineSize;
+		if (widthLineSize == -1)
+			widthLineSize = this.widthLineSize;
+		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
+				initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
+				initialY + 100 * highLineSize));
+		buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
+		// shapeList.add(new RectangleShape(x - 10, y + 50, x + 30, y + 20));
+		// ifResultx = x - 10;
+		// ifResulty = y + 50;
+		// lineList.add(new Line(x + 10, y + 80, x + 10, y + 120));
+		totalSize += size;
 	}
 
-	public void setLineSize(int lineSize) {
-		this.lineSize = lineSize;
+	public int getWidthLineSize() {
+		return widthLineSize;
 	}
-	
+
+	public void setWidthLineSize(int widthLineSize) {
+		this.widthLineSize = widthLineSize;
+	}
+
 	public int getInitialX() {
 		return initialX;
 	}
-	
+
 	public int getInitialY() {
 		return initialY;
 	}
-	
+
+	public int getDefRecX1() {
+		return defRecX1;
+	}
+
+	public void setDefRecX1(int defRecX1) {
+		this.defRecX1 = defRecX1;
+	}
+
+	public int getDefRecX2() {
+		return defRecX2;
+	}
+
+	public void setDefRecX2(int defRecX2) {
+		this.defRecX2 = defRecX2;
+	}
+
+	public int getDefRecY1() {
+		return defRecY1;
+	}
+
+	public void setDefRecY1(int defRecY1) {
+		this.defRecY1 = defRecY1;
+	}
+
+	public int getDefRecY2() {
+		return defRecY2;
+	}
+
+	public void setDefRecY2(int defRecY2) {
+		this.defRecY2 = defRecY2;
+	}
+
+	public int getHighLineSize() {
+		return highLineSize;
+	}
+
+	public void setHighLineSize(int highLineSize) {
+		this.highLineSize = highLineSize;
+	}
+
 }

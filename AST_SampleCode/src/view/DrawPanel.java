@@ -19,9 +19,12 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import module.Block;
 import module.IfStatement;
 import module.Statement;
 import view.bean.DiamondShape;
@@ -44,8 +47,12 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 	private Point startPoint;
 	private Point endPoint;
 
-	public DrawPanel() {
+	// panel
+	private StatementPanel statementPanel;
+
+	public DrawPanel(final StatementPanel statementPanel) {
 		// start: set start & end point
+		this.statementPanel = statementPanel;
 		startPoint = new Point(startXNo, 22);
 		endPoint = new Point(startXNo, 350);
 		// end: set start & end point
@@ -58,14 +65,12 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 
 				int y = evt.getY();
 
-				currentSquareIndex = getRec(x, y);
-
-				if (currentSquareIndex < 0) // not inside a square
-
-				{
-
+				if (statementPanel.getStatementSelected().equals("If Statement")) {
+					System.out.println("Add If!");
 					addIfStatement(x, y);
-
+				} else if (statementPanel.getStatementSelected().equals("Block")) {
+					System.out.println("Add Block!");
+					addBlock(x, y);
 				}
 
 			}
@@ -98,6 +103,9 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 
 		super.paintComponent(g);
 		// start: set start & end point
+		JLabel startPointLabel = new JLabel("Start Point");
+		startPointLabel.setBounds((int) startPoint.getX() - 20, (int) startPoint.getY() - 30, 100, 40);
+		this.add(startPointLabel);
 		g.fillOval((int) startPoint.getX() + 5, (int) startPoint.getY(), 10, 10);
 		g.fillOval((int) endPoint.getX() + 5, (int) endPoint.getY(), 10, 10);
 		// build shape
@@ -106,22 +114,24 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 			IfStatement ifstatement = (IfStatement) statementList.get(x);
 			generateIfStatement(ifstatement, g);
 		}
+		JLabel endPointLabel = new JLabel("End Point");
+		endPointLabel.setBounds((int) endPoint.getX() - 20, (int) endPoint.getY(), 100, 40);
+		this.add(endPointLabel);
 
 	}
 
-	public int getRec(int x, int y) {
+	public void addBlock(int x, int y) {
+		if (statementList.size() == 0) {
+			System.out.println("No statement!");
+		} else {
+			boolean createStatus = false;
+			// check include any statement
+			for (int i = 0; i < statementList.size(); i++) {
+				createStatus = addBlockChecking((IfStatement) statementList.get(i), x, y, createStatus);
+			}
 
-		// for (int i = 0; i < rect.size(); i++) {
-		//
-		// if (rect.get(i).contains(x, y)) {
-		//
-		// return i;
-		//
-		// }
-		//
-		// }
-
-		return -1;
+		}
+		repaint();
 	}
 
 	public void addIfStatement(int x, int y) {
@@ -134,12 +144,12 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 			boolean createStatus = false;
 			// System.out.println("x: "+x);
 			// System.out.println("y: "+y);
-			
+
 			// check include any statement
 			for (int i = 0; i < statementList.size(); i++) {
 				createStatus = addIfChecking((IfStatement) statementList.get(i), x, y, createStatus);
 			}
-			
+
 			// not include any statement
 			if (!createStatus) {
 				// reset end point to new
@@ -161,8 +171,87 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 	private void resetEndPoint(IfStatement ifStatement) {
 		ifStatement.setEnd(false);
 		if (ifStatement.getResultStatement() != null) {
-			resetEndPoint((IfStatement) ifStatement.getResultStatement());
+			if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+				resetEndPoint((IfStatement) ifStatement.getResultStatement());
+			} else if ((ifStatement.getResultStatement()).getNodeType() == (Statement.BLOCK)) {
+				resetEndPoint((IfStatement) ifStatement.getResultStatement());
+			}
 		}
+	}
+
+	private boolean addBlockChecking(IfStatement ifStatement, int x, int y, boolean createStatus) {
+		ArrayList<Shape> shapeList = ifStatement.getShapeList();
+		// refersh diagram
+		if (createStatus) {
+			ifStatement.buildDiagram(ifStatement.getInitialX(), ifStatement.getInitialY() + ifStatement.getTotalSize(),
+					-1, -1, ifStatement.getDefRecX1(), ifStatement.getDefRecY1(), ifStatement.getDefRecX2(),
+					ifStatement.getDefRecY2());
+			if (ifStatement.getResultStatement() != null) {
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					addBlockChecking(resultIfStatement, x, y, createStatus);
+				}
+			}
+		}
+		//
+		if (!createStatus) {
+			if (ifStatement.getResultStatement() != null) {
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					createStatus = addBlockChecking(resultIfStatement, x, y, createStatus);
+					if (createStatus) {
+						ifStatement.setWidthLineSize(resultIfStatement.getWidthLineSize() + 1);
+						ifStatement.setHighLineSize(resultIfStatement.getHighLineSize() + 1);
+						ifStatement.buildDiagramWithoutShape(ifStatement.getInitialX(), ifStatement.getInitialY(),
+								ifStatement.getWidthLineSize(), ifStatement.getHighLineSize(),
+								ifStatement.getTotalSize());
+
+					}
+				}
+			}
+
+			for (int z = 0; z < shapeList.size(); z++) {
+				Shape shape = shapeList.get(z);
+
+				switch (shape.getShapeType()) {
+				case 1:
+					// Rectangle
+					// System.out.println("x: "+shape.getX1());
+					// System.out.println("x2: "+shape.getX2());
+					// System.out.println("Y1: "+shape.getY1());
+					// System.out.println("y2: "+shape.getY2());
+					// System.out.println("w: "+shape.getWidth());
+					// System.out.println("h: "+shape.getHeight());
+					// check have inside the other statement?
+					// true get statement and set inside
+					if (x >= shape.getX1() && x <= (shape.getX1() + shape.getWidth()) && y >= shape.getY1()
+							&& y <= (shape.getY1() + shape.getHeight())) {
+						createStatus = true;
+						System.out.println("include!");
+						String input = JOptionPane.showInputDialog(null, "Enter Input:", "Dialog for Input Block",
+								JOptionPane.WARNING_MESSAGE);
+						// if(label!=null)
+						// input = label.getText();
+						if (input.length() <= 3 || input == null) {
+							System.out.println("no create!");
+							return false;
+						}
+						System.out.println("input value:" + input);
+						System.out.println("input length:" + input.length());
+						// ifStatement.setEnd(false);
+						Block block = new Block(input, shape.getX1(), shape.getY1());
+						ifStatement.setResultStatement(block);
+					}
+					break;
+				case 2:
+					// Diamond
+					// shape.getX1();
+					// shape.getY1();
+					break;
+				}
+			}
+		}
+		return createStatus;
 	}
 
 	private boolean addIfChecking(IfStatement ifStatement, int x, int y, boolean createStatus) {
@@ -170,21 +259,28 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 		// refersh diagram
 		if (createStatus) {
 			ifStatement.buildDiagram(ifStatement.getInitialX(), ifStatement.getInitialY() + ifStatement.getTotalSize(),
-					-1);
+					-1, -1, ifStatement.getDefRecX1(), ifStatement.getDefRecY1(), ifStatement.getDefRecX2(),
+					ifStatement.getDefRecY2());
 			if (ifStatement.getResultStatement() != null) {
-				IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
-				addIfChecking(resultIfStatement, x, y, createStatus);
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					addIfChecking(resultIfStatement, x, y, createStatus);
+				}
 			}
 		}
 		if (!createStatus) {
 			if (ifStatement.getResultStatement() != null) {
-				IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
-				createStatus = addIfChecking(resultIfStatement, x, y, createStatus);
-				if (createStatus) {
-					ifStatement.setLineSize(ifStatement.getLineSize() + 1);
-					ifStatement.buildDiagramWithoutShape(ifStatement.getInitialX(), ifStatement.getInitialY(),
-							ifStatement.getLineSize(), ifStatement.getTotalSize());
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					createStatus = addIfChecking(resultIfStatement, x, y, createStatus);
+					if (createStatus) {
+						ifStatement.setWidthLineSize(ifStatement.getWidthLineSize() + 1);
+						ifStatement.setHighLineSize(ifStatement.getHighLineSize() + 1);
+						ifStatement.buildDiagramWithoutShape(ifStatement.getInitialX(), ifStatement.getInitialY(),
+								ifStatement.getWidthLineSize(), ifStatement.getHighLineSize(),
+								ifStatement.getTotalSize());
 
+					}
 				}
 			}
 
@@ -243,67 +339,9 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent event) {
-
-		int x = event.getX();
-
-		int y = event.getY();
-
-		if (getRec(x, y) >= 0) {
-
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-
-		} else {
-
-			setCursor(Cursor.getDefaultCursor());
-
-		}
-	}
-
-	@Override
 	public void mouseDragged(MouseEvent event) {
 
-		// int x = event.getX();
-		//
-		// int y = event.getY();
-		//
-		// if (currentSquareIndex >= 0) {
-		//
-		// Graphics graphics = getGraphics();
-		//
-		// graphics.setXORMode(getBackground());
-		//
-		// ((Graphics2D) graphics).draw(rect.get(currentSquareIndex));
-		//
-		// rect.get(currentSquareIndex).x = x;
-		//
-		// rect.get(currentSquareIndex).y = y;
-		//
-		// ((Graphics2D) graphics).draw(rect.get(currentSquareIndex));
-		//
-		// graphics.dispose();
-		//
-		// }
 	}
-
-	// private void buildArrow(int x, int y, int status) {
-	// if (status == 1) {
-	// lineList.add(new Line(x, y, x - 6, y - 6));
-	// lineList.add(new Line(x, y, x + 6, y - 6));
-	// }
-	// if (status == 2) {
-	// lineList.add(new Line(x, y, x + 6, y - 6));
-	// lineList.add(new Line(x, y, x + 6, y + 6));
-	// }
-	// if (status == 3) {
-	// lineList.add(new Line(x, y, x - 6, y - 6));
-	// lineList.add(new Line(x, y, x + 6, y - 6));
-	// }
-	// if (status == 4) {
-	// lineList.add(new Line(x, y, x - 6, y - 6));
-	// lineList.add(new Line(x, y, x + 6, y - 6));
-	// }
-	// }
 
 	private void drawDiamond(Graphics g, DiamondShape diamondShape) {
 		int x = (diamondShape.getX1() + diamondShape.getX2()) / 2;
@@ -333,8 +371,20 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 	private void generateIfStatement(IfStatement ifStatement, Graphics g) {
 		// System.out.println("ifStatement.getEnd(): " + ifStatement.getEnd());
 		if (ifStatement.getResultStatement() != null) {
-			IfStatement ifstatement2 = (IfStatement) ifStatement.getResultStatement();
-			generateIfStatement(ifstatement2, g);
+			Statement tempStatement = ifStatement.getResultStatement();
+			System.out.println(tempStatement.getNodeType());
+
+			if (tempStatement.getNodeType() == tempStatement.IF_STATEMENT) {
+				IfStatement ifstatement2 = (IfStatement) ifStatement.getResultStatement();
+				generateIfStatement(ifstatement2, g);
+			} else if (tempStatement.getNodeType() == tempStatement.BLOCK) {
+				//
+				JLabel tempLabel = ((Block) tempStatement).getLabel();
+				// System.out.println("test");
+				// for (int i = 0; i < labelList.size(); i++) {
+				this.add(tempLabel);
+				// }
+			}
 		}
 		ArrayList<Shape> shapeList = ifStatement.getShapeList();
 		ArrayList<Line> lineList = ifStatement.getLineList();
@@ -399,6 +449,12 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 			lineList.add(new Line(x, y, x - 6, y - 6));
 			lineList.add(new Line(x, y, x + 6, y - 6));
 		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
