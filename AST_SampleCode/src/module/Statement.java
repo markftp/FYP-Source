@@ -6,25 +6,24 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-
 public abstract class Statement {
 
 	private String optionalLeadingComment = null;
-	
+
 	Statement() {
-		
+
 	}
-		
+
 	int memSize() {
 		int size = BASE_NODE_SIZE + 1 * 4 + stringSize(getLeadingComment());
 		return size;
 	}
-	
-	
+
 	public static final int BLOCK = 8;
 	public static final int IF_STATEMENT = 1;
+	public static final int WHILE_LOOP_STATEMENT = 2;
 	public static final int PROTECT = 4;
-	
+
 	// field setting
 	static final boolean CYCLE_RISK = true;
 	static final boolean NO_CYCLE_RISK = false;
@@ -34,34 +33,35 @@ public abstract class Statement {
 	int typeAndFlags = 0;
 	private int startPosition = -1;
 	private int length = 0;
-	
+
 	static final int HEADERS = 12;
 
 	static final int BASE_NODE_SIZE = HEADERS + 7 * 4;
-	
+
 	public String getLeadingComment() {
 		return this.optionalLeadingComment;
 	}
-	
+
 	private void setNodeType(int nodeType) {
 		int old = this.typeAndFlags & 0xFFFF0000;
 		this.typeAndFlags = old | (nodeType << 16);
 	}
-	
+
 	public abstract int getNodeType();
 
 	abstract Statement init(int x, int y);
 	
+	abstract Statement init(int x, int y, boolean status);
+
 	abstract int getWidthLineSize();
-	
+
 	abstract int getHighLineSize();
 
 	static void createPropertyList(Class nodeClass, List propertyList) {
 		// stuff nodeClass at head of list for future ref
 		propertyList.add(nodeClass);
 	}
-	
-	
+
 	static List reapPropertyList(List propertyList) {
 		propertyList.remove(0); // remove nodeClass
 		// compact
@@ -69,16 +69,15 @@ public abstract class Statement {
 		a.addAll(propertyList);
 		return Collections.unmodifiableList(a);
 	}
-	
-	
+
 	public final int getStartPosition() {
 		return this.startPosition;
 	}
-	
+
 	public final int getLength() {
 		return this.length;
 	}
-	
+
 	static int stringSize(String string) {
 		int size = 0;
 		if (string != null) {
@@ -90,5 +89,18 @@ public abstract class Statement {
 		return size;
 	}
 
+	public abstract boolean addIfChecking(Statement tempStatement, int x,
+			int y, boolean createStatus);
+
+	public abstract boolean addBlockChecking(Statement tempStatement, int x,
+			int y, boolean createStatus);
+
+	public abstract boolean addWhileLoopChecking(Statement tempStatement, int x,
+			int y, boolean createStatus);
 	
+	public abstract void setEnd(boolean b);
+
+	public abstract int getInitialX();
+	public abstract int getInitialY();
+	public abstract int getTotalSize();
 }

@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
@@ -37,18 +38,19 @@ public class main {
 		});
 
 		StatementPanel statementPanel = new StatementPanel();
-		statementPanel.setBounds(0, 300, 500, 200);
-		statementPanel.setPreferredSize(new Dimension(100, 200));
+		statementPanel.setBounds(200, 300, 500, 200);
+		statementPanel.setPreferredSize(new Dimension(200, 200));
 		// end
-		
+//		statementPanel.setBackground(Color.BLACK); 
 		JScrollPane scrollPane = new JScrollPane(new DrawPanel(statementPanel));
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(250, 100, 500, 400);
+		scrollPane.setBounds(100, 100, 500, 400);
 		JPanel contentPane = new JPanel(null);
-		contentPane.setPreferredSize(new Dimension(800, 600));
+		// window size
+		contentPane.setPreferredSize(new Dimension(650, 600));
 		contentPane.add(scrollPane);
-
+		contentPane.setBackground(Color.DARK_GRAY); 
 		JPanel parent = new JPanel();
 		parent.setLayout(new BoxLayout(parent, BoxLayout.LINE_AXIS));
 		jFrame.add(parent);

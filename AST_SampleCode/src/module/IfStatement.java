@@ -2,6 +2,8 @@ package module;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import view.Line;
 import view.bean.DiamondShape;
 import view.bean.RectangleShape;
@@ -89,34 +91,41 @@ public class IfStatement extends Statement {
 			totalSize += ((IfStatement) resultStatement).getTotalSize();
 			lineList = new ArrayList();
 			shapeList = new ArrayList();
-			shapeList.add(new DiamondShape(initialX + 30, initialY + 30, initialX - 10, initialY));
+			shapeList.add(new DiamondShape(initialX + 30, initialY + 30,
+					initialX - 10, initialY));
 			ifRulex = initialX + 30;
 			ifRuley = initialY + 30;
-			lineList.add(new Line(initialX + 10, initialY + 30, initialX + 10, initialY + 50));
+			lineList.add(new Line(initialX + 10, initialY + 30, initialX + 10,
+					initialY + 50));
 			buildArrow(initialX + 10, initialY + 50, 3);
 
 			widthLineSize = resultStatement.getWidthLineSize() + widthLineSize;
 			highLineSize = resultStatement.getHighLineSize() + highLineSize;
-			lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
-			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
-					initialY + 100 * highLineSize));
-			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
-					initialY + 100 * highLineSize));
+			lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50
+					* widthLineSize, initialY + 15));
+			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15,
+					initialX + 50 * widthLineSize, initialY + 100
+							* highLineSize));
+			lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100
+					* highLineSize, initialX + 10, initialY + 100
+					* highLineSize));
 			buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
-			lineList.add(new Line(initialX + 10, initialY + 80 * highLineSize, initialX + 10,
-					initialY + 120 * widthLineSize));
+			lineList.add(new Line(initialX + 10, initialY + 80 * highLineSize,
+					initialX + 10, initialY + 120 * widthLineSize));
 			// shapeList.add(new RectangleShape(initialX - 10, initialY + 50,
 			// initialX + 30, initialY + 20));
 			ifResulty = initialY + 50;
-			this.resultStatement = (IfStatement) resultStatement.init(initialX, ifResulty);
+			this.resultStatement = (IfStatement) resultStatement.init(initialX,
+					ifResulty);
 
 		} else if (resultStatement.getNodeType() == resultStatement.BLOCK) {
 			this.resultStatement = resultStatement;
-			int LabelSize = ((Block) resultStatement).getLabel().getText().length();
+			int LabelSize = ((Block) resultStatement).getLabel().getText()
+					.length();
 			int result = LabelSize / 4;
 			widthLineSize = result;
-			buildDiagram(initialX, initialY, widthLineSize, highLineSize, defRecX1, defRecY1, defRecX2 * result,
-					defRecY2);
+			buildDiagram(initialX, initialY, widthLineSize, highLineSize,
+					defRecX1, defRecY1, defRecX2 * result, defRecY2);
 
 		}
 	}
@@ -166,6 +175,8 @@ public class IfStatement extends Statement {
 
 	public void setEnd(boolean isEnd) {
 		this.isEnd = isEnd;
+		if(resultStatement!=null && !isEnd)
+			resultStatement.setEnd(isEnd);
 	}
 
 	public boolean getStart() {
@@ -176,8 +187,8 @@ public class IfStatement extends Statement {
 		this.isStart = isStart;
 	}
 
-	public void buildDiagram(int x, int y, int widthLineSize, int highLineSize, int RecX1, int RecY1, int RecX2,
-			int RecY2) {
+	public void buildDiagram(int x, int y, int widthLineSize, int highLineSize,
+			int RecX1, int RecY1, int RecX2, int RecY2) {
 		shapeList = new ArrayList();
 		lineList = new ArrayList();
 		initialX = x;
@@ -196,19 +207,22 @@ public class IfStatement extends Statement {
 			highLineSize = this.highLineSize;
 		if (widthLineSize == -1)
 			widthLineSize = this.widthLineSize;
-		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
-		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
-				initialY + 100 * highLineSize));
-		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
-				initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50
+				* widthLineSize, initialY + 15));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15,
+				initialX + 50 * widthLineSize, initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100
+				* highLineSize, initialX + 10, initialY + 100 * highLineSize));
 		buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
-		shapeList.add(new RectangleShape(x + RecX1, y + RecY1, x + RecX2, y + RecY2));
+		shapeList.add(new RectangleShape(x + RecX1, y + RecY1, x + RecX2, y
+				+ RecY2));
 		ifResultx = x - 10;
 		ifResulty = y + 50;
 		lineList.add(new Line(x + 10, y + 80, x + 10, y + 120));
 	}
 
-	public void buildDiagramWithoutShape(int x, int y, int widthLineSize, int highLineSize, int size) {
+	public void buildDiagramWithoutShape(int x, int y, int widthLineSize,
+			int highLineSize, int size) {
 		shapeList = new ArrayList();
 		lineList = new ArrayList();
 		initialX = x;
@@ -227,11 +241,12 @@ public class IfStatement extends Statement {
 			highLineSize = this.highLineSize;
 		if (widthLineSize == -1)
 			widthLineSize = this.widthLineSize;
-		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50 * widthLineSize, initialY + 15));
-		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15, initialX + 50 * widthLineSize,
-				initialY + 100 * highLineSize));
-		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100 * highLineSize, initialX + 10,
-				initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 30, initialY + 15, initialX + 50
+				* widthLineSize, initialY + 15));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 15,
+				initialX + 50 * widthLineSize, initialY + 100 * highLineSize));
+		lineList.add(new Line(initialX + 50 * widthLineSize, initialY + 100
+				* highLineSize, initialX + 10, initialY + 100 * highLineSize));
 		buildArrow(initialX + 10, initialY + 100 * highLineSize, 2);
 		// shapeList.add(new RectangleShape(x - 10, y + 50, x + 30, y + 20));
 		// ifResultx = x - 10;
@@ -294,6 +309,183 @@ public class IfStatement extends Statement {
 
 	public void setHighLineSize(int highLineSize) {
 		this.highLineSize = highLineSize;
+	}
+
+	public boolean addIfChecking(Statement tempStatement, int x, int y,
+			boolean createStatus) {
+		IfStatement ifStatement = (IfStatement) tempStatement;
+		ArrayList<Shape> shapeList = ifStatement.getShapeList();
+		// refersh diagram
+		if (createStatus) {
+			ifStatement.buildDiagram(ifStatement.getInitialX(),
+					ifStatement.getInitialY() + ifStatement.getTotalSize(), -1,
+					-1, ifStatement.getDefRecX1(), ifStatement.getDefRecY1(),
+					ifStatement.getDefRecX2(), ifStatement.getDefRecY2());
+			if (ifStatement.getResultStatement() != null) {
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement
+							.getResultStatement();
+					addIfChecking(resultIfStatement, x, y, createStatus);
+				}else if ((ifStatement.getResultStatement()).getNodeType() == (Statement.WHILE_LOOP_STATEMENT)) {
+					WhileLoopStatement resultIfStatement = (WhileLoopStatement) ifStatement
+							.getResultStatement();
+					addWhileLoopChecking(resultIfStatement, x, y, createStatus);
+				}
+			}
+		}
+		if (!createStatus) {
+			if (ifStatement.getResultStatement() != null) {
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement
+							.getResultStatement();
+					createStatus = addIfChecking(resultIfStatement, x, y,
+							createStatus);
+					if (createStatus) {
+						ifStatement.setWidthLineSize(ifStatement
+								.getWidthLineSize() + 1);
+						ifStatement.setHighLineSize(ifStatement
+								.getHighLineSize() + 1);
+						ifStatement.buildDiagramWithoutShape(
+								ifStatement.getInitialX(),
+								ifStatement.getInitialY(),
+								ifStatement.getWidthLineSize(),
+								ifStatement.getHighLineSize(),
+								ifStatement.getTotalSize());
+
+					}
+				}
+			}
+
+			for (int z = 0; z < shapeList.size(); z++) {
+				Shape shape = shapeList.get(z);
+
+				switch (shape.getShapeType()) {
+				case 1:
+					// Rectangle
+					// System.out.println("x: "+shape.getX1());
+					// System.out.println("x2: "+shape.getX2());
+					// System.out.println("Y1: "+shape.getY1());
+					// System.out.println("y2: "+shape.getY2());
+					// System.out.println("w: "+shape.getWidth());
+					// System.out.println("h: "+shape.getHeight());
+					// check have inside the other statement?
+					// true get statement and set inside
+					if (x >= shape.getX1()
+							&& x <= (shape.getX1() + shape.getWidth())
+							&& y >= shape.getY1()
+							&& y <= (shape.getY1() + shape.getHeight())) {
+						createStatus = true;
+						System.out.println("include");
+						// IfStatement ifStatement = (IfStatement)
+						// statementList.get(0);
+						// ifStatement.setStart(true);
+						ifStatement.setEnd(false);
+						IfStatement ifStatement2 = new IfStatement();
+						ifStatement2.setStart(false);
+						ifStatement2.setEnd(true);
+						ifStatement.setResultStatement(ifStatement2);
+						// statementList = new ArrayList();
+						// statementList.add(ifStatement);
+					}
+					break;
+				case 2:
+					// Diamond
+					// shape.getX1();
+					// shape.getY1();
+					break;
+				}
+			}
+		}
+		return createStatus;
+	}
+	
+	public boolean addBlockChecking(Statement tempStatement, int x, int y, boolean createStatus) {
+		IfStatement ifStatement = (IfStatement) tempStatement;
+		ArrayList<Shape> shapeList = ifStatement.getShapeList();
+		// refersh diagram
+		if (createStatus) {
+			ifStatement.buildDiagram(ifStatement.getInitialX(), ifStatement.getInitialY() + ifStatement.getTotalSize(),
+					-1, -1, ifStatement.getDefRecX1(), ifStatement.getDefRecY1(), ifStatement.getDefRecX2(),
+					ifStatement.getDefRecY2());
+			if (ifStatement.getResultStatement() != null) {
+//				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+//					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					addBlockChecking(ifStatement.getResultStatement(), x, y, createStatus);
+//				}
+			}
+		}
+		//
+		if (!createStatus) {
+			if (ifStatement.getResultStatement() != null) {
+				if ((ifStatement.getResultStatement()).getNodeType() == (Statement.IF_STATEMENT)) {
+					IfStatement resultIfStatement = (IfStatement) ifStatement.getResultStatement();
+					createStatus = addBlockChecking(resultIfStatement, x, y, createStatus);
+					if (createStatus) {
+						ifStatement.setWidthLineSize(resultIfStatement.getWidthLineSize() + 1);
+						ifStatement.setHighLineSize(resultIfStatement.getHighLineSize() + 1);
+						ifStatement.buildDiagramWithoutShape(ifStatement.getInitialX(), ifStatement.getInitialY(),
+								ifStatement.getWidthLineSize(), ifStatement.getHighLineSize(),
+								ifStatement.getTotalSize());
+
+					}
+				}
+			}
+
+			for (int z = 0; z < shapeList.size(); z++) {
+				Shape shape = shapeList.get(z);
+
+				switch (shape.getShapeType()) {
+				case 1:
+					// Rectangle
+					// System.out.println("x: "+shape.getX1());
+					// System.out.println("x2: "+shape.getX2());
+					// System.out.println("Y1: "+shape.getY1());
+					// System.out.println("y2: "+shape.getY2());
+					// System.out.println("w: "+shape.getWidth());
+					// System.out.println("h: "+shape.getHeight());
+					// check have inside the other statement?
+					// true get statement and set inside
+					if (x >= shape.getX1() && x <= (shape.getX1() + shape.getWidth()) && y >= shape.getY1()
+							&& y <= (shape.getY1() + shape.getHeight())) {
+						createStatus = true;
+						System.out.println("include!");
+						String input = JOptionPane.showInputDialog(null, "Enter Input:", "Dialog for Input Block",
+								JOptionPane.WARNING_MESSAGE);
+						// if(label!=null)
+						// input = label.getText();
+						if (input.length() <= 3 || input == null) {
+							System.out.println("no create!");
+							return false;
+						}
+						System.out.println("input value:" + input);
+						System.out.println("input length:" + input.length());
+						// ifStatement.setEnd(false);
+						Block block = new Block(input, shape.getX1(), shape.getY1());
+						ifStatement.setResultStatement(block);
+					}
+					break;
+				case 2:
+					// Diamond
+					// shape.getX1();
+					// shape.getY1();
+					break;
+				}
+			}
+		}
+		return createStatus;
+	}
+
+	@Override
+	public boolean addWhileLoopChecking(Statement tempStatement, int x, int y,
+			boolean createStatus) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	Statement init(int x, int y, boolean status) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

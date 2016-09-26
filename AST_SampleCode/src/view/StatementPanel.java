@@ -39,17 +39,20 @@ import view.bean.Shape;
 public class StatementPanel extends JPanel implements MouseMotionListener {
 
 	private String statementSelected = "If Statement";
-	private JRadioButton Ifstatement = new JRadioButton("If Statement");
+	private JRadioButton ifstatement = new JRadioButton("If Statement");
 	private JRadioButton block = new JRadioButton("Block");
+	private JRadioButton whileLoopStatement = new JRadioButton("While Loop Statement");
 	
 	public StatementPanel() {
 		// start: set start & end point
 		ButtonGroup bG = new ButtonGroup();
-		bG.add(Ifstatement);
+		bG.add(ifstatement);
+		bG.add(whileLoopStatement);
 		bG.add(block);
-		this.add(Ifstatement);
+		this.add(ifstatement);
+		this.add(whileLoopStatement);
 		this.add(block);
-		Ifstatement.setSelected(true);
+		ifstatement.setSelected(true);
 		ActionListener actionListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -57,7 +60,8 @@ public class StatementPanel extends JPanel implements MouseMotionListener {
 				setStatementSelected(aButton.getText());
 			}
 		};
-		Ifstatement.addActionListener(actionListener);
+		ifstatement.addActionListener(actionListener);
+		whileLoopStatement.addActionListener(actionListener);
 		block.addActionListener(actionListener);
 	}
 

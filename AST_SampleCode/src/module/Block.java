@@ -32,7 +32,8 @@ public class Block extends Statement {
 		this.input = input;
 		if (label == null) {
 			label = new JLabel(input);
-			label.setBounds(x + 5, y + 5, 100 + input.length(), 10 + input.length());
+			label.setBounds(x + 5, y + 5, 100 + input.length(),
+					10 + input.length());
 		} else {
 			label.setText(input);
 		}
@@ -81,6 +82,57 @@ public class Block extends Statement {
 	int getHighLineSize() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public boolean addIfChecking(Statement tempStatement, int x, int y,
+			boolean createStatus) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean addBlockChecking(Statement ifStatement, int x, int y,
+			boolean createStatus) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setEnd(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getInitialX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getInitialY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTotalSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean addWhileLoopChecking(Statement tempStatement, int x, int y,
+			boolean createStatus) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	Statement init(int x, int y, boolean status) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
